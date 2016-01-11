@@ -6,6 +6,7 @@ hero = Player { pname   = "TestHeroine"
               , health  = (10,10)
               , mana    = (0,0)                   
               , cclass  = "Hero"
+              , psees = []
               }
 generateSalamander :: Coord -> Actor
 generateSalamander there = Actor { aname     = "Salamander"
@@ -13,4 +14,4 @@ generateSalamander there = Actor { aname     = "Salamander"
                                  , ahealth   = (15,15)
                                  , amana     = (5,5)
                                  , behaviour = Aggressive
-                                 , sees      = [] }
+                                 , asees      = [] }

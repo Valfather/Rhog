@@ -1,6 +1,7 @@
 module Levels where
 import Types
 import Tools
+import Actors
 emptylevel :: Level
 emptylevel = Level { lname = "Empty Level"
                    , height = 0
@@ -9,6 +10,7 @@ emptylevel = Level { lname = "Empty Level"
                    , tileheight = 0
                    , tilewidth = 0
                    , spos = (0,0)
+                   , actors = []
 	               , lvlmap = [] }
 level1 :: Level
 level1 = Level { lname = "Temple of Test"
@@ -18,6 +20,7 @@ level1 = Level { lname = "Temple of Test"
                , tileheight = 23
                , tilewidth = 23
                , spos = (15,27)
+               , actors = [generateSalamander (4,8), generateSalamander (24,4), generateSalamander (23,16)]
                , lvlmap = [15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15
 ,15,1,1,1,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1,1,2,1,1,1,1,13,1,1,1,15
 ,15,1,14,14,14,14,14,14,1,2,2,2,2,1,14,14,14,14,14,1,2,1,14,14,14,14,14,14,1,15

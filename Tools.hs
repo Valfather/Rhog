@@ -62,6 +62,16 @@ loadPlayer player = translate (fromIntegral (px*23))  (fromIntegral (py*23)) (pn
   where
     (px, py) = ppos player
     pnfile = "Player/" ++ (cclass player) ++ ".png"
+-- |Turns all monsters the player can see to pictures
+loadActors :: [Actor] -> Picture
+loadActors [] = pictures []
+loadActors seenactors = pictures (allPictures seenactors)
+    where
+     allPictures [] = []
+     allPictures (x:xs) = (translate (fromIntegral (ax*23)) (fromIntegral (ay*23)) (png ("Monsters/" ++ (aname x) ++ ".png"))) : allPictures xs
+       where
+        (ax, ay) = (apos x)
+   
 -- | check what tile is at that coord
 whatIsThere :: Coord
             -> NewLevelMap

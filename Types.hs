@@ -9,21 +9,23 @@ data Level = Level { lname       :: String
                    , tilewidth   :: Int
                    , spos        :: (Int,Int)
                    , lvlmap      :: [Int]
-                   } deriving (Show, Eq, Read)
+                   , actors      :: [Actor]
+                   } deriving (Show, Eq)
 
 data Player = Player { pname   :: String
                      , ppos    :: (Int, Int)
                      , health  :: (Int, Int)
                      , mana    :: (Int, Int)                    
                      , cclass  :: String
-                     } deriving (Show, Eq, Read)  
+                     , psees    :: [Actor] 
+                     } deriving (Show, Eq)  
                      
 data Actor = Actor  { aname     :: String
                     , apos      :: (Int, Int)
                     , ahealth   :: (Int, Int)
                     , amana     :: (Int, Int)
                     , behaviour :: Behaviour
-                    , sees      :: [Player]
+                    , asees      :: [Player]
                     } deriving (Show, Eq)
 
 type LevelMap = [(String,Int,Int)]
