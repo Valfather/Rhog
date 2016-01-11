@@ -1,7 +1,7 @@
 module Levels where
 import Types
 import Tools
-level1 :: Level
+emptylevel :: Level
 emptylevel = Level { lname = "Empty Level"
                    , height = 0
                    , width = 0
@@ -10,6 +10,7 @@ emptylevel = Level { lname = "Empty Level"
                    , tilewidth = 0
                    , spos = (0,0)
 	               , lvlmap = [] }
+level1 :: Level
 level1 = Level { lname = "Temple of Test"
                , height = 30
                , width = 30

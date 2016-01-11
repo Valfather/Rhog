@@ -5,6 +5,7 @@ import Graphics.Gloss.Game
 import Tools
 import Levels
 import Types
+import Actors
 import PlayerClasses
 
 mgwidth, mgheight, offset :: Int
@@ -21,15 +22,15 @@ background = black
 fps :: Int
 fps = 30
 
-firstplayer = loadPlayer mage
+firstplayer = loadPlayer hero
 firstlevel = loadLevel level1
 firstrender :: Picture
 firstrender = pictures [firstlevel, firstplayer]
 
 cGame :: WholeGame
-cGame = Game { cplayer = mage
+cGame = Game { cplayer = hero
              , clevel  = level1
-             , justmoved = True
+             , newTurn = True
              , lastrender = firstrender
              }
 
@@ -38,7 +39,7 @@ updateGame _ game = game
 
 renderGame :: WholeGame -> Picture
 renderGame game 
-    | justmoved game = pictures [oldmap, newplayerpos]
+    | newTurn game = pictures [oldmap, newplayerpos]
     | otherwise = oldmap
     where
       oldmap = translate (-23*10) (-23*10) (lastrender game)

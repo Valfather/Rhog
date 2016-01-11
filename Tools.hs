@@ -79,7 +79,7 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
     mwidth = width (clevel game)
     tset = tileset (clevel game)
     newgame = updatekGame game
-    newplayer -- ^ check if the tile you're trying to go to is a floor, door, or navigable tile. otherwise, you're stuck in place
+    newplayer --  check if the tile you're trying to go to is a floor, door, or navigable tile. otherwise, you're stuck in place
        | x == 'q'  = if whatIsThere (oldpposx - 1, oldpposy) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx - 1, oldpposy) } else cplayer game
        | x == 'd'  = if whatIsThere (oldpposx + 1, oldpposy) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx + 1, oldpposy) } else cplayer game
        | x == 's'  = if whatIsThere (oldpposx, oldpposy - 1) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx, oldpposy - 1) } else cplayer game
@@ -104,5 +104,9 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
        |x == 14 = "floor_"    ++ tset
        |x == 15 = ""
     newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*23) (png ("Tilesets/"++oldplayerpos++".png"))]
-    updatekGame game = game { cplayer = newplayer, justmoved = True, lastrender = newMap}
-handleKeys _ game = game -- ^ in all other cases, you're fucked 
+    updatekGame game = game { cplayer = newplayer, newTurn = turnhappened, lastrender = newMap}
+      where
+        turnhappened
+          | x `elem` ['q','d','s','z'] = True
+          | otherwise = False
+handleKeys _ game = game   -- in all other cases, nothing happens
