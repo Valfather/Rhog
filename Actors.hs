@@ -16,13 +16,13 @@ generateSalamander there = Actor { aname     = "Salamander"
                                  , amana     = (5,5)
                                  , behaviour = Aggressive
                                  , timer     = 0
-                                 , ccycle     = 0
+                                 , ccycle    = 0
                                  , wtomove   = False
                                  , nmove = [4,2,6,8]
                                  , asees     = [] }
 
 prepActor :: Actor -> Actor
-prepActor actor = checkActorccycle (doIt actor)
+prepActor actor = doIt $ checkActorccycle actor
   where
     doIt actor
       | behaviour actor == Aggressive = prepAggressive actor

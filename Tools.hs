@@ -118,7 +118,7 @@ execActors game = game {clevel = tlevel {actors = execEachActor curActors}}
          where
            (acx, acy) = apos actor
            cdir = (nmove actor) !! (ccycle actor)
-           newccycle = 0
+           newccycle = ccycle actor+ 1
            newcoord
              |cdir == 4 = (acx - 1, acy)
              |cdir == 2 = (acx, acy - 1)
