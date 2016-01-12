@@ -119,7 +119,7 @@ execActors game = game {clevel = tlevel {actors = execEachActor curActors}}
       | amove actor /= [] = tryToMoveA actor
       | otherwise = actor
       where
-        tryToMoveA actor = if allowedToMove newcoord then actor {amove = drop 1 (amove actor), apos = newcoord} else actor {amove = drop 1 (amove actor)}
+        tryToMoveA actor = if allowedToMove newcoord then actor {asees = drop 1 (amove actor), amove = drop 1 (amove actor), apos = newcoord} else actor {amove = drop 1 (amove actor)}
           where
             newcoord = (amove actor) !! 0
         tryToMoveN actor = if allowedToMove newcoord then (actor {apos = newcoord, ccycle = newccycle}) else actor {ccycle = newccycle}
@@ -173,18 +173,20 @@ prepActor :: Actor -> Actor
 prepActor actor = checkActorccycle $ doIt actor
   where
     doIt actor
-      | behaviour actor == Aggressive = prepAggressive actor
+      | behaviour actor == Curious = prepCurious actor
+      | behaviour actor == Passive    = prepNeutral actor
       | otherwise = actor
     checkActorccycle actor
       | ccycle actor == (length $ nmove actor) = actor {ccycle = 0}
       | otherwise = actor
 
 prepNeutral :: Actor -> Actor
-prepNeutral actor  
-  | timer actor < 3 = actor {timer = (timer actor) + 1, wtomove = False} 
+prepNeutral actor
+  | activity actor < 0  = actor
+  | timer actor < (activity actor) = actor {timer = (timer actor) + 1, wtomove = False} 
   | otherwise = actor {timer = 0, wtomove = True}
 
-prepAggressive :: Actor -> Actor
-prepAggressive actor
+prepCurious :: Actor -> Actor
+prepCurious actor
   | asees actor == [] = prepNeutral actor
-  | otherwise = actor {amove = asees actor}
+  | otherwise = actor {amove = asees actor, timer = 0}

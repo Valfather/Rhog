@@ -20,7 +20,7 @@ level1 = Level { lname = "Temple of Test"
                , tileheight = 23
                , tilewidth = 23
                , spos = (15,27)
-               , actors = [generateSalamander (4,8), generateSalamander (24,4), generateSalamander (23,16)]
+               , actors = [generateSalamander (4,8), generateSalamander (24,4), generateSalamander (23,16), generateSalamander (25,26)]
                , lvlmap = [15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15
 ,15,1,1,1,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1,1,2,1,1,1,1,13,1,1,1,15
 ,15,1,14,14,14,14,14,14,1,2,2,2,2,1,14,14,14,14,14,1,2,1,14,14,14,14,14,14,1,15

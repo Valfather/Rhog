@@ -30,13 +30,14 @@ data Actor = Actor  { aname     :: String
                     , timer     :: Int
                     , ccycle    :: Int
                     , nmove     :: [Int]
+                    , activity  :: Int
                     , amove     :: [Coord]
                     , asees     :: [Coord]
                     } deriving (Show, Eq)
 
 type LevelMap = [(Int,Int,Int)] -- ^ whatTile, wherex, wherey
 
-data Behaviour = Aggressive | Friendly | Passive deriving (Show, Eq)
+data Behaviour = Curious | Friendly | Passive deriving (Show, Eq)
 type NewLevelMap = ([Int],Int,Int)
 type Coord = (Int,Int)
 

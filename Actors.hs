@@ -14,11 +14,11 @@ generateSalamander there = Actor { aname     = "Salamander"
                                  , apos      = there
                                  , ahealth   = (15,15)
                                  , amana     = (5,5)
-                                 , behaviour = Aggressive
+                                 , behaviour = Curious
                                  , timer     = 0
                                  , ccycle    = 0
                                  , wtomove   = False
+                                 , activity  = 3
                                  , nmove     = [4,4,2,2,6,6,8,8]
                                  , amove     = []
                                  , asees     = [] }
-
