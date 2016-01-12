@@ -26,7 +26,10 @@ data Actor = Actor  { aname     :: String
                     , ahealth   :: (Int, Int)
                     , amana     :: (Int, Int)
                     , behaviour :: Behaviour
+                    , wtomove   :: Bool
                     , timer     :: Int
+                    , ccycle     :: Int
+                    , nmove     :: [Int]
                     , asees     :: [Player]
                     } deriving (Show, Eq)
 

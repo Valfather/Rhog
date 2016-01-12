@@ -2,6 +2,7 @@ module Tools where
 import Graphics.Gloss
 import Graphics.Gloss.Game
 import Types
+import Actors
 import System.Random
 import Preload
 -- | Returns the position of the element in the list that corresponds to its coordinates in the lvlmap
@@ -79,7 +80,7 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
        | x == 'z'  = if allowedToMove (oldpposx, oldpposy - 1)  then (cplayer game) {ppos = (oldpposx, oldpposy - 1) } else cplayer game
        | otherwise = cplayer game
        where
-         allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9]
+         allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game)
     oldplayerpos = oldmap !! (fetchCoord (oldpposx,oldpposy)  (oldmap, mwidth, mheight))
     newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*(-23)) (pictures [(preloadedTiles !! oldplayerpos)])]
     updatekGame game = game { cplayer = newplayer, newTurn = turnhappened, lastrender = newMap}
@@ -88,3 +89,57 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
           | x `elem` ['q','d','s','z'] = True
           | otherwise = False
 handleKeys _ game = game   -- in all other cases, nothing happens
+-- | prepare the actors' actions this turn
+prepActors :: WholeGame -> WholeGame
+prepActors game = game { clevel = tlevel {actors = prepEachActor curActors}}
+  where
+    tlevel = clevel game
+    curActors = actors tlevel
+    prepEachActor [] = []
+    prepEachActor (x:xs) = (prepActor x) : (prepEachActor xs)
+-- | execute said action
+execActors :: WholeGame -> WholeGame
+execActors game = game {clevel = tlevel {actors = execEachActor curActors}}
+  where
+    tlevel = clevel game  
+    curActors = actors (clevel game)
+    oldmap = lvlmap (clevel game)
+    mheight = height (clevel game)
+    mwidth = width (clevel game)
+    tset = tileset (clevel game)
+    allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game)
+    execEachActor [] = []
+    execEachActor (x:xs) = (execActor x ) : (execEachActor xs)
+    execActor actor
+     | wtomove actor = tryToMoveRd actor
+     | otherwise = actor
+     where
+       tryToMoveRd actor = if allowedToMove newcoord then (actor {apos = newcoord, ccycle = newccycle}) else actor
+         where
+           (acx, acy) = apos actor
+           cdir = (nmove actor) !! (ccycle actor)
+           newccycle = 0
+           newcoord
+             |cdir == 4 = (acx - 1, acy)
+             |cdir == 2 = (acx, acy - 1)
+             |cdir == 6 = (acx + 1, acy)
+             |otherwise = (acx, acy + 1)
+       
+-- | tells if there is an actor or a player at the given coordinates.
+thereBeMonsters :: Coord -> WholeGame -> Bool
+thereBeMonsters (wx,wy) game
+  | actorsThere || playerThere = True
+  | otherwise = False
+  where 
+    actorsThere 
+      | (wx,wy) `elem` (coordList hactors) = True
+      | otherwise = False
+      where
+        hactors = actors (clevel game)
+        coordList [] = []
+        coordList (x:xs) = (apos x) : (coordList xs)
+    playerThere
+      | (wx,wy) == (ppos hplayer) = True
+      | otherwise = False
+      where 
+        hplayer = cplayer game

@@ -36,8 +36,12 @@ cGame = Game { cplayer = hero {psees = actors level1}
              }
 
 updateGame :: Float -> WholeGame -> WholeGame
-updateGame _ game = game
-
+updateGame _ game
+    | newTurn game = actActors newgame
+    | otherwise = game
+    where
+      newgame = game {turncount = (turncount game) +1 }
+      actActors game = execActors (prepActors game)
 renderGame :: WholeGame -> Picture
 renderGame game 
     | newTurn game = scale 2 2 (translate (-23*fromIntegral(ppx)) (23*fromIntegral(ppy)) (pictures [oldmap, newplayerpos, actorspos ]))

@@ -16,13 +16,25 @@ generateSalamander there = Actor { aname     = "Salamander"
                                  , amana     = (5,5)
                                  , behaviour = Aggressive
                                  , timer     = 0
+                                 , ccycle     = 0
+                                 , wtomove   = False
+                                 , nmove = [4,2,6,8]
                                  , asees     = [] }
 
-moveActor :: Actor -> Actor
-moveActor actor
-  | behaviour actor == Aggressive = moveAggressive actor
-  | otherwise = actor  
-moveAggressive :: Actor -> Actor
-moveAggressive actor
-  | asees actor == [] = actor
+prepActor :: Actor -> Actor
+prepActor actor = checkActorccycle (doIt actor)
+  where
+    doIt actor
+      | behaviour actor == Aggressive = prepAggressive actor
+      | otherwise = actor
+    checkActorccycle actor
+      | ccycle actor == 4 = actor {ccycle = 0}
+      | otherwise = actor
+prepNeutral :: Actor -> Actor
+prepNeutral actor  
+  | timer actor <3 = actor {timer = (timer actor) + 1} 
+  | otherwise = actor {timer = 0, wtomove = True}
+prepAggressive :: Actor -> Actor
+prepAggressive actor
+  | asees actor == [] = prepNeutral actor
   | otherwise = actor
