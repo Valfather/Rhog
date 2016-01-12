@@ -30,21 +30,23 @@ firstrender = pictures [firstlevel, firstplayer]
 cGame :: WholeGame
 cGame = Game { cplayer = hero {psees = actors level1}
              , clevel  = level1
-             , newTurn = True
+             , newTurn = False
+             , newTurnDone = True
              , lastrender = firstrender
              , turncount = 0
              }
 
 updateGame :: Float -> WholeGame -> WholeGame
 updateGame _ game
-    | newTurn game = actActors newgame
-    | otherwise = game
+    | newTurn game = actActors $ updateSight newgame
+    | otherwise = game 
     where
       newgame = game {turncount = (turncount game) +1 }
-      actActors game = execActors (prepActors game)
+      actActors game = (execActors (prepActors game)) {newTurnDone = True}
+      updateSight game = game { cplayer = (cplayer game) {psees = actors (clevel game)} }
 renderGame :: WholeGame -> Picture
 renderGame game 
-    | newTurn game = scale 2 2 (translate (-23*fromIntegral(ppx)) (23*fromIntegral(ppy)) (pictures [oldmap, newplayerpos, actorspos ]))
+    | newTurnDone game = scale 2 2 (translate (-23*fromIntegral(ppx)) (23*fromIntegral(ppy)) (pictures [oldmap, newplayerpos, actorspos ]))
     | otherwise = oldmap
     where
       actorspos = loadActors (psees (cplayer game))

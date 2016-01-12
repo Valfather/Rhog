@@ -40,9 +40,10 @@ type NewLevelMap = ([Int],Int,Int)
 type Coord = (Int,Int)
 
 --  | contains the whole game structure
-data WholeGame = Game { cplayer    :: Player
-                      , clevel     :: Level
-                      , newTurn  :: Bool
-                      , lastrender :: Picture
-                      , turncount :: Int
+data WholeGame = Game { cplayer     :: Player
+                      , clevel      :: Level
+                      , newTurn     :: Bool
+                      , lastrender  :: Picture
+                      , turncount   :: Int
+                      , newTurnDone :: Bool
                       } deriving (Show, Eq)

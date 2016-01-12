@@ -83,9 +83,9 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
          allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game)
     oldplayerpos = oldmap !! (fetchCoord (oldpposx,oldpposy)  (oldmap, mwidth, mheight))
     newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*(-23)) (pictures [(preloadedTiles !! oldplayerpos)])]
-    updatekGame game = game { cplayer = newplayer, newTurn = turnhappened, lastrender = newMap}
+    updatekGame game = game { cplayer = newplayer, newTurn = turnHappened, lastrender = newMap}
       where
-        turnhappened
+        turnHappened
           | x `elem` ['q','d','s','z'] = True
           | otherwise = False
 handleKeys _ game = game   -- in all other cases, nothing happens

@@ -32,7 +32,7 @@ prepActor actor = doIt $ checkActorccycle actor
       | otherwise = actor
 prepNeutral :: Actor -> Actor
 prepNeutral actor  
-  | timer actor <3 = actor {timer = (timer actor) + 1} 
+  | timer actor < 3 = actor {timer = (timer actor) + 1} 
   | otherwise = actor {timer = 0, wtomove = True}
 prepAggressive :: Actor -> Actor
 prepAggressive actor
