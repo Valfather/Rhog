@@ -114,7 +114,7 @@ execActors game = game {clevel = tlevel {actors = execEachActor curActors}}
      | wtomove actor = tryToMoveRd actor
      | otherwise = actor
      where
-       tryToMoveRd actor = if allowedToMove newcoord then (actor {apos = newcoord, ccycle = newccycle}) else actor
+       tryToMoveRd actor = if allowedToMove newcoord then (actor {apos = newcoord, ccycle = newccycle}) else actor {ccycle = newccycle}
          where
            (acx, acy) = apos actor
            cdir = (nmove actor) !! (ccycle actor)

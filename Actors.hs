@@ -18,7 +18,7 @@ generateSalamander there = Actor { aname     = "Salamander"
                                  , timer     = 0
                                  , ccycle    = 0
                                  , wtomove   = False
-                                 , nmove = [4,2,6,8]
+                                 , nmove = [4,4,2,2,6,6,8,8]
                                  , asees     = [] }
 
 prepActor :: Actor -> Actor
@@ -28,7 +28,7 @@ prepActor actor = doIt $ checkActorccycle actor
       | behaviour actor == Aggressive = prepAggressive actor
       | otherwise = actor
     checkActorccycle actor
-      | ccycle actor == 4 = actor {ccycle = 0}
+      | ccycle actor == (length $ nmove actor) = actor {ccycle = 0}
       | otherwise = actor
 prepNeutral :: Actor -> Actor
 prepNeutral actor  
