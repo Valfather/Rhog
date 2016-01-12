@@ -156,13 +156,13 @@ hasNeighbours :: Coord -> WholeGame -> Bool
 hasNeighbours (wx,wy) game
   | (thereBeMonsters (wx+1,wy) game || thereBeMonsters (wx-1, wy) game || thereBeMonsters (wx, wy+1) game || thereBeMonsters (wx, wy-1) game) = True
   | otherwise = False
+  
 -- | Returns a list containing the neighbours of the given coordinates
 neighboursOf :: Coord -> WholeGame -> [Coord]
 neighboursOf (wx,wy) game = filter isNeighbour [(wx+1,wy),(wx-1,wy),(wx,wy+1),(wx,wy+1),(wx,wy-1)]
   where
-    isNeighbour x
-      | thereBeMonsters x game = True
-      | otherwise = False
+    isNeighbour x = thereBeMonsters x game
+    
 -- updates what the actor sees
 updateActor ::  WholeGame ->Actor -> Actor
 updateActor game actor

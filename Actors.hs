@@ -1,10 +1,10 @@
 module Actors where
 import Types
 hero :: Player
-hero = Player { pname   = "TestHeroine"
+hero = Player { pname   = "TestHero"
               , ppos    = (15,27)
               , health  = (10,10)
-              , mana    = (0,0)                   
+              , mana    = (0,0)                
               , cclass  = 0
               , psees = []
               }

@@ -24,7 +24,7 @@ background = black
 fps :: Int
 fps = 30
 
-firstplayer = loadPlayer hero
+firstplayer = loadPlayer $ promoteFighter hero
 firstlevel = loadLevel level1
 firstrender :: Picture
 firstrender = (pictures [firstlevel, firstplayer])
