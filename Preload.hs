@@ -31,7 +31,7 @@ preloadedPlayer :: [Picture]
 preloadedPlayer =  [ png (playerfolder ++ "Hero.png")
                    , png (playerfolder ++ "Mage.png")
                    , png (playerfolder ++ "Fighter.png")
-                   , png (playerfolder ++ "Archer.png") ]
+                   , png (playerfolder ++ "Archer.png")]
 preloadedActors :: [Picture]
-preloadedActors =  [ png (actorfolder ++ "Salamander.png")]
+preloadedActors =  [ png (playerfolder ++ "Salamander.png")]
                    

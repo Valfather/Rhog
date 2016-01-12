@@ -28,9 +28,10 @@ data Actor = Actor  { aname     :: String
                     , behaviour :: Behaviour
                     , wtomove   :: Bool
                     , timer     :: Int
-                    , ccycle     :: Int
+                    , ccycle    :: Int
                     , nmove     :: [Int]
-                    , asees     :: [Player]
+                    , amove     :: [Coord]
+                    , asees     :: [Coord]
                     } deriving (Show, Eq)
 
 type LevelMap = [(Int,Int,Int)] -- ^ whatTile, wherex, wherey
@@ -43,6 +44,7 @@ type Coord = (Int,Int)
 data WholeGame = Game { cplayer     :: Player
                       , clevel      :: Level
                       , newTurn     :: Bool
+                      , escMenu     :: Bool
                       , lastrender  :: Picture
                       , turncount   :: Int
                       , newTurnDone :: Bool

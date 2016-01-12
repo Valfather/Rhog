@@ -65,7 +65,11 @@ whatIsThere there lmap = grid !! (fetchCoord there lmap)
     (grid, x, y) = lmap 
 -- Handle înput
 handleKeys :: Event -> WholeGame -> WholeGame
-handleKeys (EventKey (Char x) Down _ _) game = newgame
+handleKeys (EventKey (SpecialKey KeySpace) Down _ _) game = game {newTurn = True} --skip a turn
+handleKeys (EventKey (Char 'p') Down _ _) game 
+  | escMenu game       = game {escMenu = False}
+  | not $ escMenu game = game {escMenu = True}
+handleKeys (EventKey (Char x) Down _ _) game = newgame --trying to move ?
   where
     (oldpposx, oldpposy) = ppos (cplayer game)  
     oldmap = lvlmap (clevel game)
@@ -80,7 +84,7 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
        | x == 'z'  = if allowedToMove (oldpposx, oldpposy - 1)  then (cplayer game) {ppos = (oldpposx, oldpposy - 1) } else cplayer game
        | otherwise = cplayer game
        where
-         allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game)
+         allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game) -- verify that nothing is blocking the player's path
     oldplayerpos = oldmap !! (fetchCoord (oldpposx,oldpposy)  (oldmap, mwidth, mheight))
     newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*(-23)) (pictures [(preloadedTiles !! oldplayerpos)])]
     updatekGame game = game { cplayer = newplayer, newTurn = turnHappened, lastrender = newMap}
@@ -107,25 +111,29 @@ execActors game = game {clevel = tlevel {actors = execEachActor curActors}}
     mheight = height (clevel game)
     mwidth = width (clevel game)
     tset = tileset (clevel game)
-    allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game)
+    allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9] && not (thereBeMonsters (ax,ay) game) -- verify that nothing is blocking the actor's path
     execEachActor [] = []
     execEachActor (x:xs) = (execActor x ) : (execEachActor xs)
     execActor actor
-     | wtomove actor = tryToMoveRd actor
-     | otherwise = actor
-     where
-       tryToMoveRd actor = if allowedToMove newcoord then (actor {apos = newcoord, ccycle = newccycle}) else actor {ccycle = newccycle}
-         where
-           (acx, acy) = apos actor
-           cdir = (nmove actor) !! (ccycle actor)
-           newccycle = ccycle actor+ 1
-           newcoord
-             |cdir == 4 = (acx - 1, acy)
-             |cdir == 2 = (acx, acy - 1)
-             |cdir == 6 = (acx + 1, acy)
-             |otherwise = (acx, acy + 1)
+      | wtomove actor = tryToMoveN actor
+      | amove actor /= [] = tryToMoveA actor
+      | otherwise = actor
+      where
+        tryToMoveA actor = if allowedToMove newcoord then actor {amove = drop 1 (amove actor), apos = newcoord} else actor {amove = drop 1 (amove actor)}
+          where
+            newcoord = (amove actor) !! 0
+        tryToMoveN actor = if allowedToMove newcoord then (actor {apos = newcoord, ccycle = newccycle}) else actor {ccycle = newccycle}
+          where
+            (acx, acy) = apos actor
+            cdir = (nmove actor) !! (ccycle actor)
+            newccycle = ccycle actor + 1
+            newcoord
+              | cdir == 4 = (acx - 1, acy)
+              | cdir == 2 = (acx, acy - 1)
+              | cdir == 6 = (acx + 1, acy)
+              | otherwise = (acx, acy + 1)
        
--- | tells if there is an actor or a player at the given coordinates.
+-- | Tells if there is an actor or a player at the given coordinates.
 thereBeMonsters :: Coord -> WholeGame -> Bool
 thereBeMonsters (wx,wy) game
   | actorsThere || playerThere = True
@@ -143,3 +151,40 @@ thereBeMonsters (wx,wy) game
       | otherwise = False
       where 
         hplayer = cplayer game
+-- | Tells if the player or an actor is on a tile adjacent to the given coordinates
+hasNeighbours :: Coord -> WholeGame -> Bool
+hasNeighbours (wx,wy) game
+  | (thereBeMonsters (wx+1,wy) game || thereBeMonsters (wx-1, wy) game || thereBeMonsters (wx, wy+1) game || thereBeMonsters (wx, wy-1) game) = True
+  | otherwise = False
+-- | Returns a list containing the neighbours of the given coordinates
+neighboursOf :: Coord -> WholeGame -> [Coord]
+neighboursOf (wx,wy) game = filter isNeighbour [(wx+1,wy),(wx-1,wy),(wx,wy+1),(wx,wy+1),(wx,wy-1)]
+  where
+    isNeighbour x
+      | thereBeMonsters x game = True
+      | otherwise = False
+-- updates what the actor sees
+updateActor ::  WholeGame ->Actor -> Actor
+updateActor game actor
+  | neighboursOf (apos actor) game == [] = actor
+  | otherwise = actor {asees = neighboursOf (apos actor) game}
+-- prepare the actor's actions
+prepActor :: Actor -> Actor
+prepActor actor = checkActorccycle $ doIt actor
+  where
+    doIt actor
+      | behaviour actor == Aggressive = prepAggressive actor
+      | otherwise = actor
+    checkActorccycle actor
+      | ccycle actor == (length $ nmove actor) = actor {ccycle = 0}
+      | otherwise = actor
+
+prepNeutral :: Actor -> Actor
+prepNeutral actor  
+  | timer actor < 3 = actor {timer = (timer actor) + 1, wtomove = False} 
+  | otherwise = actor {timer = 0, wtomove = True}
+
+prepAggressive :: Actor -> Actor
+prepAggressive actor
+  | asees actor == [] = prepNeutral actor
+  | otherwise = actor {amove = asees actor}
