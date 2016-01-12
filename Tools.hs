@@ -47,12 +47,13 @@ loadPlayer player = translate (fromIntegral (px*23))  (fromIntegral (py*(-23))) 
 -- |Turns all monsters the player can see to pictures
 loadActors :: [Actor] -> Picture
 loadActors [] = pictures []
-loadActors seenactors = pictures (allPictures seenactors)
+loadActors seenactors = pictures (toPictures seenactors)
     where
-     allPictures [] = []
-     allPictures (x:xs) = (translate (fromIntegral (ax*23)) (fromIntegral (ay*(-23))) (png ("Monsters/" ++ (aname x) ++ ".png"))) : allPictures xs
+     toPictures [] = []
+     toPictures (x:xs) = (translate (fromIntegral (ax*23)) (fromIntegral (ay*(-23))) (preloadedActors !! whatactor)) : toPictures xs
        where
-        (ax, ay) = (apos x)
+        (ax, ay)  = (apos x)
+        whatactor = aid x
    
 -- | check what tile is at that coord
 whatIsThere :: Coord
@@ -72,13 +73,15 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
     tset = tileset (clevel game)
     newgame = updatekGame game
     newplayer --  check if the tile you're trying to go to is a floor, door, or navigable tile. otherwise, you're stuck in place
-       | x == 'q'  = if whatIsThere (oldpposx - 1, oldpposy) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx - 1, oldpposy) } else cplayer game
-       | x == 'd'  = if whatIsThere (oldpposx + 1, oldpposy) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx + 1, oldpposy) } else cplayer game
-       | x == 's'  = if whatIsThere (oldpposx, oldpposy + 1) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx, oldpposy - 1) } else cplayer game
-       | x == 'z'  = if whatIsThere (oldpposx, oldpposy - 1) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx, oldpposy + 1) } else cplayer game
+       | x == 'q'  = if allowedToMove (oldpposx - 1, oldpposy)  then (cplayer game) {ppos = (oldpposx - 1, oldpposy) } else cplayer game
+       | x == 'd'  = if allowedToMove (oldpposx + 1, oldpposy)  then (cplayer game) {ppos = (oldpposx + 1, oldpposy) } else cplayer game
+       | x == 's'  = if allowedToMove (oldpposx, oldpposy + 1)  then (cplayer game) {ppos = (oldpposx, oldpposy + 1) } else cplayer game
+       | x == 'z'  = if allowedToMove (oldpposx, oldpposy - 1)  then (cplayer game) {ppos = (oldpposx, oldpposy - 1) } else cplayer game
        | otherwise = cplayer game
+       where
+         allowedToMove (ax,ay) = whatIsThere (ax, ay) (oldmap, mwidth, mheight) `elem` [14,8,9]
     oldplayerpos = oldmap !! (fetchCoord (oldpposx,oldpposy)  (oldmap, mwidth, mheight))
-    newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*(-23)) (preloadedTiles !! oldplayerpos)]
+    newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*(-23)) (pictures [(preloadedTiles !! oldplayerpos)])]
     updatekGame game = game { cplayer = newplayer, newTurn = turnhappened, lastrender = newMap}
       where
         turnhappened

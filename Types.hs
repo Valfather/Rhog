@@ -17,15 +17,17 @@ data Player = Player { pname   :: String
                      , health  :: (Int, Int)
                      , mana    :: (Int, Int)                    
                      , cclass  :: Int
-                     , psees    :: [Actor] 
+                     , psees   :: [Actor] 
                      } deriving (Show, Eq)  
                      
 data Actor = Actor  { aname     :: String
+                    , aid       :: Int
                     , apos      :: (Int, Int)
                     , ahealth   :: (Int, Int)
                     , amana     :: (Int, Int)
                     , behaviour :: Behaviour
-                    , asees      :: [Player]
+                    , timer     :: Int
+                    , asees     :: [Player]
                     } deriving (Show, Eq)
 
 type LevelMap = [(Int,Int,Int)] -- ^ whatTile, wherex, wherey
@@ -39,4 +41,5 @@ data WholeGame = Game { cplayer    :: Player
                       , clevel     :: Level
                       , newTurn  :: Bool
                       , lastrender :: Picture
+                      , turncount :: Int
                       } deriving (Show, Eq)

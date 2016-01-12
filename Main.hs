@@ -32,6 +32,7 @@ cGame = Game { cplayer = hero {psees = actors level1}
              , clevel  = level1
              , newTurn = True
              , lastrender = firstrender
+             , turncount = 0
              }
 
 updateGame :: Float -> WholeGame -> WholeGame
@@ -39,12 +40,13 @@ updateGame _ game = game
 
 renderGame :: WholeGame -> Picture
 renderGame game 
-    | newTurn game = translate (-23*14) (23*15) (pictures [oldmap, newplayerpos, actorspos ])
+    | newTurn game = scale 2 2 (translate (-23*fromIntegral(ppx)) (23*fromIntegral(ppy)) (pictures [oldmap, newplayerpos, actorspos ]))
     | otherwise = oldmap
     where
       actorspos = loadActors (psees (cplayer game))
       oldmap =  (lastrender game)
-      newplayerpos =  (loadPlayer (cplayer game))
+      newplayerpos =  loadPlayer (cplayer game)
+      (ppx, ppy) = ppos (cplayer game)
       
 main :: IO ()
 main = Graphics.Gloss.play window background fps cGame renderGame handleKeys updateGame

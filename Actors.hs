@@ -10,11 +10,13 @@ hero = Player { pname   = "TestHeroine"
               }
 generateSalamander :: Coord -> Actor
 generateSalamander there = Actor { aname     = "Salamander"
+                                 , aid       = 0
                                  , apos      = there
                                  , ahealth   = (15,15)
                                  , amana     = (5,5)
                                  , behaviour = Aggressive
-                                 , asees      = [] }
+                                 , timer     = 0
+                                 , asees     = [] }
 
 moveActor :: Actor -> Actor
 moveActor actor

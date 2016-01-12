@@ -1,5 +1,7 @@
+--The whole file will be rewritten and doesn't work at the moment
 
--- | Fill a Map with a specific element. See makeMap to know what tiles correspond to the numbers.   
+
+-- | Fill a Map with a specific element. See Preload to know what tiles correspond to the numbers.   
 fillMap :: [Int]   -- ^ original map
          -> Int    -- ^ wanted element
          -> [Int]  -- ^ end result
