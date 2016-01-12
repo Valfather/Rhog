@@ -39,7 +39,7 @@ updateGame _ game = game
 
 renderGame :: WholeGame -> Picture
 renderGame game 
-    | newTurn game = translate (-23*14) (-23*15) (pictures [oldmap, newplayerpos, actorspos ])
+    | newTurn game = translate (-23*14) (23*15) (pictures [oldmap, newplayerpos, actorspos ])
     | otherwise = oldmap
     where
       actorspos = loadActors (psees (cplayer game))
