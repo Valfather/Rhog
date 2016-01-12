@@ -9,8 +9,8 @@ import Actors
 import PlayerClasses
 
 mgwidth, mgheight, offset :: Int
-mgwidth = 300
-mgheight = 300
+mgwidth = 23*34
+mgheight = 23*30
 offset = 100
 
 window :: Display
@@ -39,7 +39,7 @@ updateGame _ game = game
 
 renderGame :: WholeGame -> Picture
 renderGame game 
-    | newTurn game = translate (-23*10) (-23*10) (pictures [oldmap, newplayerpos, actorspos ])
+    | newTurn game = translate (-23*14) (-23*15) (pictures [oldmap, newplayerpos, actorspos ])
     | otherwise = oldmap
     where
       actorspos = loadActors (psees (cplayer game))

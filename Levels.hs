@@ -11,7 +11,7 @@ emptylevel = Level { lname = "Empty Level"
                    , tilewidth = 0
                    , spos = (0,0)
                    , actors = []
-	               , lvlmap = [] }
+                   , lvlmap = [] }
 level1 :: Level
 level1 = Level { lname = "Temple of Test"
                , height = 30

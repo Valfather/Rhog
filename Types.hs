@@ -16,7 +16,7 @@ data Player = Player { pname   :: String
                      , ppos    :: (Int, Int)
                      , health  :: (Int, Int)
                      , mana    :: (Int, Int)                    
-                     , cclass  :: String
+                     , cclass  :: Int
                      , psees    :: [Actor] 
                      } deriving (Show, Eq)  
                      
@@ -28,7 +28,7 @@ data Actor = Actor  { aname     :: String
                     , asees      :: [Player]
                     } deriving (Show, Eq)
 
-type LevelMap = [(String,Int,Int)]
+type LevelMap = [(Int,Int,Int)] -- ^ whatTile, wherex, wherey
 
 data Behaviour = Aggressive | Friendly | Passive deriving (Show, Eq)
 type NewLevelMap = ([Int],Int,Int)

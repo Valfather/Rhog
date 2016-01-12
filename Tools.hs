@@ -3,6 +3,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Game
 import Types
 import System.Random
+import Preload
 -- | Returns the position of the element in the list that corresponds to its coordinates in the lvlmap
 fetchCoord :: Coord -- ^ Coordinates
            -> NewLevelMap -- ^ Map
@@ -14,54 +15,35 @@ fetchPos :: Int         -- ^ n:  position of the element in the list
          -> Coord
 fetchPos n (grid, width, height) = (xpos, ypos)
   where
-    ypos = n `div` width
-    xpos = n - ypos
+   ypos = n `div` width
+   xpos = n - ypos
 -- | Turns a level into a picture useable by gloss
 loadLevel :: Level -> Picture
 loadLevel level = turnToPic (mkMap level)
   where
-    theight = tileheight level
-    twidth = tilewidth level
-    turnToPic levelmap = pictures [translate (fromIntegral (theight*xpos)) (fromIntegral (twidth*ypos)) (png ("Tilesets/"++tile++".png")) | (tile,xpos,ypos) <- levelmapfixed]
+   theight = tileheight level
+   twidth = tilewidth level
+   turnToPic levelmap = pictures [translate (fromIntegral (theight*xpos)) (fromIntegral (twidth*ypos)) (preloadedTiles !! tile ) | (tile,xpos,ypos) <- levelmapfixed]
       where -- for debugging purposes, ignore the following
-        levelmapfixed = levelmap
+       levelmapfixed = levelmap
 -- | Subfunction of loadLevel
 mkMap :: Level-> LevelMap
 mkMap maplev = makeMap themap tset 0 0 lwidth
     where
-    themap = lvlmap maplev
-    lwidth = width maplev
-    tset = tileset maplev
+     themap = lvlmap maplev
+     lwidth = width maplev
+     tset = tileset maplev
 -- | Subfunction of mkMap
 makeMap :: [Int] -> String -> Int -> Int -> Int -> LevelMap
 makeMap [] _ _ _ _ = []
 makeMap (x:xs) tset y z lwidth
-        |y < lwidth = ((transformap x), y, z) : makeMap xs tset (y+1) z lwidth
-        |y == lwidth = ((transformap x), 0, z+1)  : makeMap xs tset 1 (z+1) lwidth
-        where
-          transformap x
-           |x == 0 = "wall1_"     ++ tset
-           |x == 1 = "wall2_"     ++ tset
-           |x == 2 = "wall3_"     ++ tset
-           |x == 3 = "wallCH_"    ++ tset
-           |x == 4 = "water"
-           |x == 5 = "fire"
-           |x == 6 = "acidwater"
-           |x == 7 = "wallCV_"    ++ tset
-           |x == 8 = "doorOH_"    ++ tset
-           |x == 9 = "doorOV_"    ++ tset
-           |x == 10 = "doorCV_"   ++ tset
-           |x == 11 = "doorCH_"   ++ tset
-           |x == 12 = "stairsD"
-           |x == 13 = "stairsU"
-           |x == 14 = "floor_"    ++ tset
-           |x == 15 = ""
+        | y < lwidth = (x, y, z) : makeMap xs tset (y+1) z lwidth
+        | y == lwidth = (x, 0, z+1)  : makeMap xs tset 1 (z+1) lwidth
 --  | Turns a player into a picture useable by gloss
 loadPlayer :: Player -> Picture
-loadPlayer player = translate (fromIntegral (px*23))  (fromIntegral (py*23)) (png pnfile)
+loadPlayer player = translate (fromIntegral (px*23))  (fromIntegral (py*23)) (preloadedPlayer !! (cclass player))
   where
     (px, py) = ppos player
-    pnfile = "Player/" ++ (cclass player) ++ ".png"
 -- |Turns all monsters the player can see to pictures
 loadActors :: [Actor] -> Picture
 loadActors [] = pictures []
@@ -95,25 +77,8 @@ handleKeys (EventKey (Char x) Down _ _) game = newgame
        | x == 's'  = if whatIsThere (oldpposx, oldpposy - 1) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx, oldpposy - 1) } else cplayer game
        | x == 'z'  = if whatIsThere (oldpposx, oldpposy + 1) (oldmap, mwidth, mheight) `elem` [14,8,9] then (cplayer game) {ppos = (oldpposx, oldpposy + 1) } else cplayer game
        | otherwise = cplayer game
-    oldplayerpos = transformap (oldmap !! (fetchCoord (oldpposx,oldpposy)  (oldmap, mwidth, mheight)))
-    transformap x
-       |x == 0 = "wall1_"     ++ tset
-       |x == 1 = "wall2_"     ++ tset
-       |x == 2 = "wall3_"     ++ tset
-       |x == 3 = "wallCH_"    ++ tset
-       |x == 4 = "water"
-       |x == 5 = "fire"
-       |x == 6 = "acidwater"
-       |x == 7 = "wallCV_"    ++ tset
-       |x == 8 = "doorOH_"    ++ tset
-       |x == 9 = "doorOV_"    ++ tset
-       |x == 10 = "doorCV_"   ++ tset
-       |x == 11 = "doorCH_"   ++ tset
-       |x == 12 = "stairsD"
-       |x == 13 = "stairsU"
-       |x == 14 = "floor_"    ++ tset
-       |x == 15 = ""
-    newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*23) (png ("Tilesets/"++oldplayerpos++".png"))]
+    oldplayerpos = oldmap !! (fetchCoord (oldpposx,oldpposy)  (oldmap, mwidth, mheight))
+    newMap = pictures [lastrender game, translate (fromIntegral $ oldpposx*23) (fromIntegral $ oldpposy*23) (preloadedTiles !! oldplayerpos)]
     updatekGame game = game { cplayer = newplayer, newTurn = turnhappened, lastrender = newMap}
       where
         turnhappened
